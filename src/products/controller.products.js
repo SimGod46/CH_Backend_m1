@@ -1,6 +1,9 @@
 import { Router } from "express";
 import fs from 'fs' 
+import __dirname from "../utils.js";
+import {io} from "socket.io-client";
 
+const socket = io();
 const router = Router();
 
 const getMax = (arr, prop) => {
@@ -16,26 +19,26 @@ class ProductManager{
         this.editFile(true);
     }
     addProduct(titulo,descripcion,precio,miniatura,codigo,inventario,estado=true){
-        const repeatedCodes = this.products.filter((x)=>x.code==codigo);
-        if (repeatedCodes.length > 0){
-            console.log("codigo ya existente...")
-        } else{
-            this.LastId=getMax(this.products,"id")+1;
-            console.log(getMax(this.products,"id"));
-            const product={
-                title:titulo,
-                description:descripcion,
-                code:codigo,
-                price:precio,
-                status:estado,
-                thumbnail:miniatura,
-                stock:inventario,
-                id:this.LastId
-            }
-            this.products.push(product);
+        this.LastId=getMax(this.products,"id")+1;
+        console.log(getMax(this.products,"id"));
+        const product={
+            title:titulo,
+            description:descripcion,
+            code:codigo,
+            price:precio,
+            status:estado,
+            thumbnail:miniatura,
+            stock:inventario,
+            id:this.LastId
         }
+        this.products.push(product);
         this.editFile(false);     
     } 
+
+    existsCode(codigo){
+        const repeatedCodes = this.products.filter((x)=>x.code==codigo);
+        return repeatedCodes.length > 0
+    }
 
     getProducts(){
        return this.products;
@@ -77,7 +80,7 @@ class ProductManager{
     }
 }
 
-const productos = new ProductManager("./products/productos.JSON");
+const productos = new ProductManager(__dirname+"/products/productos.JSON");
 
 function midType(req,res,next){
     if(req.body.title !== undefined && req.body.description !== undefined && req.body.code !== undefined && req.body.price !== undefined && req.body.status !== undefined && req.body.stock !== undefined){
@@ -110,14 +113,18 @@ router.get("/:pid",(req,res)=>{
     res.send({status:"success",payload:productos.getProductById(pid)})
 })
 
-router.post("/",(req,res)=>{ //post("/",midType,(req,res) 
+router.post("/",midType,(req,res)=>{ //post("/",midType,(req,res) 
     let {title,description,code,price,status,stock,thumbnails} = req.body;
-    if(title !== undefined && description !== undefined && code !== undefined && price !== undefined && status !== undefined){
-        productos.addProduct(title,description,price,thumbnails,code,stock,status)
-        return res.status(200).send()    
-    } else {
-        res.status(400).send({status:"error",error: "TODOS los campos son obligarios (excepto thumbnails)"});
+//    productos.addProduct(title,description,price,thumbnails,code,stock,status)
+    if (productos.existsCode(code)){
+        return res.status(400).send({status:"error",error: "CODIGO repetido"})
+    } else{
+        productos.addProduct(title,description,price,thumbnails,code,stock,status);
+        socket.emit("productsUpdated",productos.getProducts())
+
     }
+    return res.status(200).send()    
+    
 })
 
 router.put("/:pid",(req,res)=>{
@@ -132,6 +139,7 @@ router.delete("/:pid",(req,res)=>{
     let {pid} = req.params;
     pid = parseInt(pid);
     productos.deleteProduct(pid)
+    socket.emit("productsUpdated",productos.getProducts())
     return res.status(200).send()
 })
 

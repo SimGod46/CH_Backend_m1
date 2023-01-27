@@ -1,5 +1,6 @@
 import { Router } from "express";
 import fs from 'fs' 
+import __dirname from "../utils.js";
 
 const router = Router();
 
@@ -77,7 +78,7 @@ class CartManager{
         }
 }
 
-const carritos = new CartManager("./carts/carrito.JSON","./products/productos.JSON")
+const carritos = new CartManager(__dirname+"/carts/carrito.JSON",__dirname+"/products/productos.JSON")
 
 router.post("/",(req,res)=>{
     carritos.createCart();
