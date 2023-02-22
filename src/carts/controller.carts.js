@@ -1,115 +1,89 @@
 import { Router } from "express";
-import fs from 'fs' 
-import __dirname from "../utils.js";
+import {Cart} from '../models/cart.model.js';
 
 const router = Router();
 
-const getMax = (arr, prop) => {
-    const tmp = arr.map(x => x[prop]);
-    return Math.max(...tmp,0);
-  }
-
-class CartManager{
-    constructor(route,route_prod){
-        this.carts = [];
-        this.products = [];
-        this.LastId = 0;
-        this.path = route;
-        this.path_products = route_prod;
-        this.editFile(true);
+class CartManager {
+    async createCart() {
+      const cart = new Cart({ id: Math.floor(Math.random() * 1000000), products: [] });
+      await cart.save();
     }
-
-    editFile(init){
-        if(init && fs.existsSync(this.path)){
-            this.carts = JSON.parse(fs.readFileSync(this.path,"utf-8").toString());
-        } else{
-            let data_obj_str=JSON.stringify(this.carts);
-            fs.writeFileSync(this.path,data_obj_str);
-        }
+  
+    async getCartById(cid) {
+      const cart = await Cart.findOne({ id: cid }).populate("products.product");
+      return cart ? cart.products : [];
     }
-
-    availableProduct(pid){
-        if(fs.existsSync(this.path_products)){
-            this.products = JSON.parse(fs.readFileSync(this.path,"utf-8").toString());
-        }
-        const product = this.products.filter((x)=>x.id == pid);
-        return product.length>0
+  
+    async addProductToCart(cid, pid, quantity) {
+      const cart = await Cart.findOne({ id: cid });
+      if (!cart) {
+        throw new Error("Cart not found");
+      }
+  
+      const product = await Product.findOne({ _id: pid });
+      if (!product) {
+        throw new Error("Product not found");
+      }
+  
+      const existingProduct = cart.products.find((p) => p.product._id.equals(pid));
+      if (existingProduct) {
+        existingProduct.quantity += quantity;
+      } else {
+        cart.products.push({ product: pid, quantity });
+      }
+  
+      await cart.save();
     }
-
-    availableProductOnCart(cid,pid){ //Según lo que entiendo de la consignia no se puede repetir el codigo...
-        let tempCart =  this.getCartById(cid);
-        const product = this.products.filter((x)=>x.id == pid);
-        const repeatedCode = tempCart.map((x)=> x.code )
-        return !repeatedCode.includes(product[0]);
+  
+    async deleteProductFromCart(cid, pid) {
+      const cart = await Cart.findOne({ id: cid });
+      if (!cart) {
+        throw new Error("Cart not found");
+      }
+  
+      const existingProductIndex = cart.products.findIndex((p) => p.product._id.equals(pid));
+      if (existingProductIndex === -1) {
+        throw new Error("Product not found in cart");
+      }
+  
+      cart.products.splice(existingProductIndex, 1);
+  
+      await cart.save();
     }
-
-    createCart(){
-        this.LastId = getMax(this.carts,"id")+1;
-        const carrito={
-            id:this.LastId, // Hacer que sea autoincrementable
-            products:[]
-        }
-        this.carts.push(carrito);
-        this.editFile(false);
-    }
-
-    getCartById(cid){
-        return this.carts.filter((x)=>x.id == cid)[0].products
-    }
-
-    addProductToCart(cid,pid,cantidad){
-        let newCarrito = this.carts.filter((x)=>x.id == cid)[0];
-        let newProduct = {product:pid,quantity:cantidad}; // modificar para corroborar si existe el producto
-
-        let existsCarrito = newCarrito["products"].filter((x)=>x.product == pid)
-        if (existsCarrito.length>0){
-            newProduct = {product:pid,quantity:existsCarrito[0].quantity+1};
-        }
-        newCarrito.products.push(newProduct);
-        this.carts = this.carts.map((x)=>{
-            if(x.id==cid){
-                return newCarrito        
-            }
-            return x
-            }
-        );
-        this.editFile(false);
-
-        }
 }
 
-const carritos = new CartManager(__dirname+"/carts/carrito.JSON",__dirname+"/products/productos.JSON")
+const cartManager = new CartManager();
 
-router.post("/",(req,res)=>{
-    carritos.createCart();
-    res.status(200).send()
-})
+router.post("/", async (req, res) => {
+  await cartManager.createCart();
+  res.status(200).send();
+});
 
-router.get("/:cid",(req,res)=>{
-    let {cid} = req.params;
-    cid = parseInt(cid);
-    res.send({status:"success",payload: carritos.getCartById(cid)});
-})
+router.get("/:cid", async (req, res) => {
+  const { cid } = req.params;
+  const cart = await cartManager.getCartById(cid);
+  res.send({ status: "success", payload: cart });
+});
 
-router.post("/:cid/product/:pid",(req,res)=>{
-    let {quantity} = req.body;
-    let {cid, pid} = req.params;
-    cid = parseInt(cid);
-    pid = parseInt(pid);
-    try{
-        if(carritos.availableProduct(pid)){
-            //res.send(carritos.carts.filter((x)=>x.id == cid)[0])
-            if(carritos.availableProductOnCart(cid,pid)){ //Según lo que entiendo de la consignia no se puede repetir el codigo...
-                carritos.addProductToCart(cid,pid,quantity)
-                res.send({status:"success",payload: carritos.carts});
-            }
-            res.status(400).send({status:"error",error: "CODIGO del producto ya existente en el carrito"});
-        } else {
-            res.status(400).send({status:"error",error: "ID producto no valido"});
-        }
-    } catch(error){
-        res.status(400).send({status:"error",error: "ID carrito no valido"});
-    }
-})
+router.post("/:cid/product/:pid", async (req, res) => {
+  const { cid, pid } = req.params;
+  const { quantity } = req.body;
+  try {
+    await cartManager.addProductToCart(cid, pid, quantity);
+    res.send({ status: "success", payload: await cartManager.getCartById(cid) });
+  } catch (err) {
+    res.status(400).send({ status: "error", error: err.message });
+  }
+});
+
+router.delete("/:cid/product/:pid", async (req, res) => {
+  const { cid, pid } = req.params;
+  try {
+    await cartManager.deleteProductFromCart(cid, pid);
+    res.status(200).send();
+  } catch (err) {
+    res.status(400).send({ status: "error", error: err.message });
+  }
+});
 
 export default router;

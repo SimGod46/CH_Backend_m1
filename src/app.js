@@ -3,6 +3,7 @@ import handlebars from "express-handlebars"
 import routes from "./routes/index.js"
 import __dirname from './utils.js';
 import { Server } from 'socket.io';
+import mongoose, { mongo } from 'mongoose';
 
 const port = 8080;
 const app = express();
@@ -28,3 +29,9 @@ socketServer.on("connection",socket=>{
     })
     //socket.emit("productsList",[{"title":"titulo1"},{"title":"titulo2"}]);
 });
+mongoose.connect("mongodb+srv://simonarias12:<password>@codercluster.miyask0.mongodb.net/?retryWrites=true&w=majority",(error)=>{
+    if(error){
+        console.log("Error al conectarse a la base de datos: "+error);
+        process.exit();
+    }
+})
