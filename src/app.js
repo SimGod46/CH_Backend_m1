@@ -4,6 +4,8 @@ import routes from "./routes/index.js"
 import __dirname from './utils.js';
 import { Server } from 'socket.io';
 import mongoose, { mongo } from 'mongoose';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
 
 const port = 8080;
 const app = express();
@@ -14,9 +16,17 @@ app.set("view engine","handlebars");
 
 
 app.use(express.static(__dirname+"/public"));
-//app.use(express.static(__dirname+"/views"));
+app.use(cookieParser());
+app.use(cookieParser("3n35Kn5%nihA"));
+
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+
+app.use(session({
+    secret:"secretCoder",
+    resave:true,
+    saveUninitialized:true
+}));
 
 routes(app);
 const httpServer = app.listen(port,()=>console.log("Running from express"));
