@@ -7,7 +7,7 @@ import loginCT from "../login/controller.login.js"
 const routes = (app)=>{
     app.use('/api/carts',carts)
     app.use('/api/products',products)
-    app.use('/api/cookies',cookies)
+    app.use('/api/sessions',cookies)
     app.use('/realtimeproducts',realtimeproducts)
     app.use('/',loginCT) // Esto es para que la primera vista sea el login!
 }

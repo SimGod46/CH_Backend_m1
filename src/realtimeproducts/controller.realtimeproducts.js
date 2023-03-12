@@ -1,9 +1,7 @@
 import { Router } from "express";
-import {productos} from "../products/productsManager.js"
 
 const router = Router();
-router.get("/",async (req,res)=>{
-    await productos.getProducts(10,true);
+router.get("/", (req,res)=>{
     res.render("realTimeProducts.handlebars");
 })
 

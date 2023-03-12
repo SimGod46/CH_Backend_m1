@@ -1,14 +1,8 @@
 import {Product} from '../models/product.model.js';
-import io from "socket.io-client";
-import {url} from "../utils.js"
+import {io} from "../app.js"
 
 class ProductManager{
-    constructor(){
-        this.socket = io(url);
-        this.socket.connect();
-        console.log("Este es el socket desde PM: "+this.socket.id+" "+url)
 
-    }
     async addProduct(titulo,descripcion,precio,miniaturas,codigo,inventario,estado=true){
         if (await Product.findOne({ code: codigo })) {
             throw new Error('CODIGO repetido');
@@ -26,17 +20,16 @@ class ProductManager{
         });
 
         await product.save();
-        this.socket.emit("productsUpdated",await Product.find());
+        io.emit("productsList",await Product.find());
     }
 
     async getProducts(limit, realtime=false){
         let products = await Product.find();
-
         if (limit) {
             products = products.slice(0, limit);
         }
         if (realtime){
-            this.socket.emit("productsUpdated",products);
+            io.emit("productsList",products);
         }
         return products;
     }
@@ -52,12 +45,12 @@ class ProductManager{
 
     async updateProduct(id,update){
         await Product.findByIdAndUpdate(id, update);
-        this.socket.emit("productsUpdated",await Product.find());
+        io.emit("productsList",await Product.find());
     }
 
     async deleteProduct(id){
         await Product.findByIdAndDelete(id);
-        this.socket.emit("productsUpdated",await Product.find());
+        io.emit("productsList",await Product.find());
     }
 }
 

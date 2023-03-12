@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import FileStore from 'session-file-store';
+import {productos} from "./products/productsManager.js"
 
 const fileStorage = FileStore(session);
 const app = express();
@@ -41,8 +42,11 @@ routes(app);const httpServer = app.listen(port,()=>console.log("Running from exp
 const io = new Server(httpServer);
 io.on("connection",socket=>{
     console.log("Nuevo socket conectado: "+socket.id+" "+socket.handshake.address);
-    socket.on("productsUpdated",async (data)=>{
-        console.log("Data actualizada: "+socket.id+" "+socket.request.url);
-        socket.emit("productsList",data); // Reenviar la info en caso de ser actualizada
+    socket.on("realtimeRequest",data=>{
+        socket.emit("productsList",productos.getProducts(10,true))
+    
     })
 });
+
+
+export {io};
