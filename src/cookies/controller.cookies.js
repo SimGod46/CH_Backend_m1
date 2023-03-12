@@ -20,15 +20,6 @@ router.delete("/deleteCookie", async (req,res)=>{
     res.clearCookie("CoderCookie").send("Cookie Removed");
 });
 
-router.get("/session", async (req,res)=>{
-    if(req.session.counter){
-        req.session.counter++;
-        res.send(`Se ha visitado el sitio ${req.session.counter} veces.`);
-    } else {
-        req.session.counter = 1;
-        res.send(`Bienvenido!`);
-    }
-});
 
 router.post("/logout", async (req,res)=>{
     req.session.destroy(err=>{
@@ -38,8 +29,9 @@ router.post("/logout", async (req,res)=>{
 });
 
 router.post("/login",(req,res)=>{
-    const {username, password} = req.query
+    const {username, password} = req.body
     if(username !== "admin" || password !== "123"){
+        req.session.admin = false;
         return res.send("Login failed")
     }
     req.session.user = username;
