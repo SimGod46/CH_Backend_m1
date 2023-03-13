@@ -1,5 +1,5 @@
-import {Product} from '../models/product.model.js';
-import {io} from "../app.js"
+import {Product} from '../../models/product.model.js';
+import {io} from "../../app.js"
 
 class ProductManager{
 

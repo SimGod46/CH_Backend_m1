@@ -6,10 +6,8 @@ import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import FileStore from 'session-file-store';
-import {productos} from "./products/productsManager.js"
-
-const fileStorage = FileStore(session);
+import {productos} from "./endpoints/products/productsManager.js"
+import MongoStore from 'connect-mongo';
 const app = express();
 
 app.engine("handlebars",handlebars.engine());
@@ -23,10 +21,14 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
 app.use(session({
-    store: new fileStorage({path:"./sessions",ttl:100,retries:0}),
+    store: MongoStore.create({
+        mongoUrl:mongoDB,
+        mongoOptions:{useNewUrlParser:true,useUnifiedTopology:true},
+        ttl:150
+    }),//new fileStorage({path:"./sessions",ttl:100,retries:0}),
     secret:"secretCoder",
-    resave:true,
-    saveUninitialized:true
+    resave:false,
+    saveUninitialized:false
 }));
 
 mongoose.set("strictQuery",false);

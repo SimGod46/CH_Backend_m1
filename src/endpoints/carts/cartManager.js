@@ -1,40 +1,40 @@
-import {Cart} from '../models/cart.model.js';
-import {Product} from '../models/product.model.js';
+import {Cart} from '../../models/cart.model.js';
+import {Product} from '../../models/product.model.js';
 
 class CartManager {
     async createCart() {
-      const cart = new Cart({ id: Math.floor(Math.random() * 1000000), products: [] });
+      const cart = new Cart({products: [] });
       await cart.save();
     }
   
     async getCartById(cid) {
-      const cart = await Cart.findOne({ id: cid }).populate("products.product");
+      const cart = await Cart.findById(cid);
       return cart ? cart.products : [];
     }
   
     async addProductToCart(cid, pid, quantity) {
-      const cart = await Cart.findOne({ id: cid });
+      const cart = await Cart.findById(cid);
       if (!cart) {
         throw new Error("Cart not found");
       }
   
-      const product = await Product.findOne({ _id: pid });
+      const product = await Product.findById(pid);
       if (!product) {
         throw new Error("Product not found");
       }
   
-      const existingProduct = cart.products.find((p) => p.product._id.equals(pid));
-      if (existingProduct) {
-        existingProduct.quantity += quantity;
+      const existingProductIndex = cart.products.findIndex((p) => p.product._id.equals(pid));
+      if (existingProductIndex !== -1) {
+        cart.products[existingProductIndex].quantity += quantity;
       } else {
-        cart.products.push({ product: pid, quantity });
+        cart.products.push({ product: pid, quantity:1 });
       }
   
       await cart.save();
     }
   
     async deleteProductFromCart(cid, pid) {
-      const cart = await Cart.findOne({ id: cid });
+      const cart = await Cart.findById(cid);
       if (!cart) {
         throw new Error("Cart not found");
       }

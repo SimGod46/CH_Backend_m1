@@ -1,0 +1,41 @@
+<div class="d-flex align-items-center justify-content-center" style="height: 100vh; padding: 0 15px; margin: 0;">
+  <div class="container" style="width:33%">
+    <div class="row">
+        <h1>Registro</h1>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <form action="/api/sessions/register" method="POST">
+        <div class="mb-3">
+            <label for="inputFName" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="inputFName" placeholder="Nombre" name="first_name">
+        </div>
+
+        <div class="mb-3">
+            <label for="inputLName" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="inputLName" placeholder="Apellido" name="last_name">
+        </div>
+
+        <div class="mb-3">
+            <label for="inputUsername" class="form-label">E-mail</label>
+            <input type="email" class="form-control" id="inputUsername" placeholder="ejemplo@dominio.com" name="email">
+        </div>
+
+        <div class="mb-3">
+            <label for="inputAge" class="form-label">Edad</label>
+            <input type="number" min="1" max="99" step="1" class="form-control" id="inputAge" placeholder="Edad" name="age">
+        </div>
+
+        <div class="mb-3">
+            <label for="inputPassword" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="inputPassword" placeholder="Contraseña" name="password">
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Registar</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

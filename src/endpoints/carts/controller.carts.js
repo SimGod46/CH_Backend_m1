@@ -16,7 +16,7 @@ router.get("/:cid", async (req, res) => {
 
 router.post("/:cid/product/:pid", async (req, res) => {
   const { cid, pid } = req.params;
-  const { quantity } = req.body;
+  const { quantity } = req.body; //TODO: Probar con un formulario?
   try {
     await cartManager.addProductToCart(cid, pid, quantity);
     res.send({ status: "success", payload: await cartManager.getCartById(cid) });

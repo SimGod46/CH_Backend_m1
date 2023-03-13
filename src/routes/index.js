@@ -1,8 +1,8 @@
-import carts from "../carts/controller.carts.js"
-import products from "../products/controller.products.js"
-import realtimeproducts from "../realtimeproducts/controller.realtimeproducts.js"
-import cookies from "../cookies/controller.cookies.js"
-import loginCT from "../login/controller.login.js"
+import carts from "../endpoints/carts/controller.carts.js"
+import products from "../endpoints/products/controller.products.js"
+import realtimeproducts from "../endpoints/realtimeproducts/controller.realtimeproducts.js"
+import cookies from "../endpoints/auth/controller.auth.js"
+import loginCT from "../endpoints/homeNav/controller.homeNav.js"
 
 const routes = (app)=>{
     app.use('/api/carts',carts)

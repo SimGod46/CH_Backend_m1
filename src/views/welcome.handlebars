@@ -1,9 +1,15 @@
 <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
-    {{#if conteo}}
+    {{#if nombre}}
         <h1>Bienvenido {{nombre}}!</h1>
         <p>Se ha visitado el sitio {{conteo}} veces.</p>
+        <div style="display:grid;grid-template-rows: 1fr; grid-template-columns: 1fr;  column-gap: 100px; width: 25vw;margin-top: 5%;">
+            <a href="/perfil" class="btn btn-primary">ver perfil</a>
+        </div>    
     {{else}}
         <h1>Bienvenido</h1>
+        <div style="display:grid;grid-template-rows: 1fr; grid-template-columns: repeat(2, 1fr);  column-gap: 100px; width: 25vw;margin-top: 5%;">
+            <a href="/ingresar" class="btn btn-primary">Ingresar</a>
+            <a href="/registrar" class="btn btn-primary">Registrarse</a>
+        </div>
     {{/if}}
-    <a href="/ingresar" class="btn btn-primary mt-3">Iniciar sesión</a>
 </div>

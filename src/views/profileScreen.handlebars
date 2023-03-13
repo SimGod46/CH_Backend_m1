@@ -1,0 +1,26 @@
+<!-- profile.hbs -->
+<div class="container">
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{first_name}} {{last_name}}</h5>
+          <p class="card-text">{{email}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="card col-md-1">
+      <div class="card-body">
+        <h5 class="card-title">Edad</h5>
+        <p class="card-text">{{age}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <a href="/api/sessions/logout" class="btn btn-primary">Cerrar sesión</a>
+  </div>
+
+</div>
