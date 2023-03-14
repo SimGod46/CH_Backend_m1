@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Usuario } from "../../models/users.model.js";
-
+import { createHash, isValidPassword } from "../../utils.js";
 const router = Router();
 
 function auth(req,res,next){
@@ -32,8 +32,8 @@ router.get("/logout", async (req,res)=>{
 
 router.post("/login",async (req,res)=>{
     const {username, password} = req.body;
-    const usuario = await Usuario.findOne({ email: username, password: password})
-    if (!usuario){
+    const usuario = await Usuario.findOne({ email: username})
+    if (!usuario || !isValidPassword(usuario,password)){
         req.session.role ="user";
         req.session.user = null;
         return res.send("El usuario y la contraseña no coinciden");
@@ -57,7 +57,7 @@ router.post("/register",async (req,res)=>{
         last_name: last_name,
         email: email,
         age: age,
-        password:password
+        password:createHash(password) 
     });
 
     await usuario.save();

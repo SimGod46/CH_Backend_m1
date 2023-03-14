@@ -8,6 +8,9 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import {productos} from "./endpoints/products/productsManager.js"
 import MongoStore from 'connect-mongo';
+import passport from 'passport';
+import initializePassport from "./config/passport.config.js"
+
 const app = express();
 
 app.engine("handlebars",handlebars.engine());
@@ -30,6 +33,9 @@ app.use(session({
     resave:false,
     saveUninitialized:false
 }));
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.set("strictQuery",false);
 mongoose.connect(mongoDB,(error)=>{
