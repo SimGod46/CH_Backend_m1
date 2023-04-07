@@ -33,6 +33,7 @@ app.use(session({
     resave:false,
     saveUninitialized:false
 }));
+
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
@@ -40,7 +41,7 @@ app.use(passport.session());
 mongoose.set("strictQuery",false);
 mongoose.connect(mongoDB,(error)=>{
     if(error){
-        console.log("Error al conectarse a la base de datos: "+error);
+        console.log("Error: No se ha podido conectar a la base de datos: "+error);
         process.exit();
     }
 })

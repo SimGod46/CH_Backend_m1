@@ -37,4 +37,8 @@ router.get("/perfil",privateAccess ,async (req,res)=>{
     res.render("profileScreen.handlebars",req.session.user)
 });
 
+router.get("/restorePassword" , (req,res)=>{
+    res.render("restorePassword.handlebars")
+});
+
 export default router;

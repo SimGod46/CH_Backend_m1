@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { Usuario } from "../../models/users.model.js";
 import { createHash, isValidPassword } from "../../utils.js";
+import passport from "passport";
+
 const router = Router();
 
 function auth(req,res,next){
@@ -30,38 +32,54 @@ router.get("/logout", async (req,res)=>{
     })
 });
 
-router.post("/login",async (req,res)=>{
+router.post("/restore",async (req,res)=>{
     const {username, password} = req.body;
     const usuario = await Usuario.findOne({ email: username})
-    if (!usuario || !isValidPassword(usuario,password)){
-        req.session.role ="user";
-        req.session.user = null;
-        return res.send("El usuario y la contraseña no coinciden");
-    }
+    if (!usuario){
+        return res.send("Usuario no valido");
+    } else {
+        await Usuario.updateOne({email:username},{password:createHash(password)});
+        res.send("Actualizado correctamente");
+    }   
+
+})
+
+router.post("/login",passport.authenticate("login",{failureRedirect:"/api/sessions/failureLogin"}),async (req,res)=>{
+    if(!req.user) return res.send("El usuario y la contraseña no coinciden");
+    
     req.session.user = {
-        email:usuario.email,
-        first_name: usuario.first_name,
-        last_name: usuario.last_name,
-        age: usuario.age
+        email:req.user.email,
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        age: req.user.age
     } ;
-    if(usuario.email=="adminCoder@coder.com"){
+    if(req.user.email=="adminCoder@coder.com"){
         req.session.role = "admin";
+    } else {
+        req.session.role = "user";
     }
     res.redirect("/realtimeproducts");
 })
 
-router.post("/register",async (req,res)=>{
-    const {first_name,last_name,email,age,password} = req.body;
-    const usuario = new Usuario({
-        first_name: first_name,
-        last_name: last_name,
-        email: email,
-        age: age,
-        password:createHash(password) 
-    });
+router.get("/failureLogin",(req,res)=>{
+    res.send("Error al loguearse");
+})
 
-    await usuario.save();
+router.post("/register",passport.authenticate("register",{failureRedirect:"/api/sessions/failureRegister"}), async (req,res)=>{
     res.send("Usuario guardado exitosamente!");
+})
+
+router.get("/failureRegister",(req,res)=>{
+    res.send("Error al registrarse");
+})
+
+router.post("/github",passport.authenticate("github",{scope:["user:email"]}), async (req,res)=>{
+
+})
+
+router.post("/githubcallback",passport.authenticate("github",{failureRedirect:"/api/sessions/login"}), async (req,res)=>{
+    req.session.user= req.user;
+    res.redirect("/");
 })
 
 router.get("/privado",auth,(req,res)=>{
