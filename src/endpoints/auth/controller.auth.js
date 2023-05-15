@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Usuario } from "../../models/users.model.js";
-import { createHash, isValidPassword } from "../../utils.js";
+import { createHash, isValidPassword, generateToken,authToken } from "../../utils.js";
 import passport from "passport";
 
 const router = Router();
@@ -58,6 +58,8 @@ router.post("/login",passport.authenticate("login",{failureRedirect:"/api/sessio
     } else {
         req.session.role = "user";
     }
+    const access_token = generateToken(req.session.user);
+
     res.redirect("/realtimeproducts");
 })
 
@@ -74,7 +76,6 @@ router.get("/failureRegister",(req,res)=>{
 })
 
 router.post("/github",passport.authenticate("github",{scope:["user:email"]}), async (req,res)=>{
-
 })
 
 router.post("/githubcallback",passport.authenticate("github",{failureRedirect:"/api/sessions/login"}), async (req,res)=>{

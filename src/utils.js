@@ -33,5 +33,4 @@ function authToken(req,res,next){
     })
 }
 
-
-export {__dirname, port,url,mongoDB,createHash,isValidPassword};
+export {__dirname, port,url,mongoDB,createHash,isValidPassword,generateToken,authToken};
