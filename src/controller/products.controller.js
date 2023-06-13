@@ -1,6 +1,7 @@
+// Responsabilidad de enviar información
 import { Router } from "express";
-import {productos} from "./productsManager.js"
-
+import {productos} from "../persist/products.persist.js"
+import { addProduct } from "../service/products.service.js";
 const router = Router();
 
 function midType(req,res,next){
@@ -39,12 +40,13 @@ router.get("/:pid", async (req,res)=>{
 });
 
 router.post("/",midType,async (req,res)=>{
-    let {title,description,code,price,status,stock,thumbnails} = req.body;
-    try {
-        await productos.addProduct(title,description,price,thumbnails,code,stock,status);
-        return res.status(200).send({status:"success"});
-    } catch (error) {
-        return res.status(400).send({status:"error",error: error.message});
+    try{
+        const {title,description,code,price,status,stock,thumbnails} = req.body;
+        const newProductInfo = {title,description,code,price,status,stock,thumbnails}
+        const newProduct = await addProduct(newProductInfo);
+        res.json({message:newProduct})
+    } catch(error){
+
     }
 });
 

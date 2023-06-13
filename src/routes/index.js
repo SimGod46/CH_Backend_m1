@@ -1,9 +1,9 @@
-import realtimeproducts from "../endpoints/realtimeproducts/controller.realtimeproducts.js"
-import products from "../endpoints/products/controller.products.js"
-import navigation from "../endpoints/homeNav/controller.homeNav.js"
-import sessions from "../endpoints/auth/controller.auth.js"
-import carts from "../endpoints/carts/controller.carts.js"
-import routerPet from "../endpoints/pets/controller.pets.js"
+import realtimeproducts from "../controller/realtimeproducts.controller.js"
+import products from "../controller/products.controller.js"
+import navigation from "../controller/homeNav.controller.js"
+import sessions from "../controller/auth.controller.js"
+import carts from "../controller/carts.controller.js"
+import routerPet from "../controller/pets.controller.js"
 
 
 const petsRouter = new routerPet()

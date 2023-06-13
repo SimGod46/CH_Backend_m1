@@ -1,5 +1,19 @@
-import {Product} from '../../models/product.model.js';
-import {io} from "../../app.js"
+// Responsabilidad de enviar a base de datos
+import {Product} from '../models/product.model.js';
+import {io} from "../index.js"
+
+const persistProducts = async newProductInfo => {
+        if (await Product.findOne({ code: codigo })) {
+            throw new Error('CODIGO repetido');
+        }
+
+        const newProduct = await Product.create(newProductInfo);
+        io.emit("productsList",await Product.find());
+        return newProduct;
+    }
+
+
+
 
 class ProductManager{
 
@@ -53,5 +67,5 @@ class ProductManager{
         io.emit("productsList",await Product.find());
     }
 }
-
-export const productos = new ProductManager();
+const productos = new ProductManager()
+export {productos, persistProducts};

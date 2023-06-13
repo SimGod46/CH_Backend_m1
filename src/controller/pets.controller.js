@@ -1,4 +1,4 @@
-import CustomRouter from"../../classes/CustomRouter.class.js"
+import CustomRouter from"../classes/CustomRouter.class.js"
 
 
 class routerPet extends CustomRouter{
