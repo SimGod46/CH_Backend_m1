@@ -1,16 +1,16 @@
 import { Router } from "express";
-import { cartManager } from "../persist/carts.persist.js";
+import { createCart, getCartById, addProductToCart, deleteProductFromCart } from "../service/carts.service.js";
 
 const router = Router();
 
 router.post("/", async (req, res) => {
-  await cartManager.createCart();
+  await createCart();
   res.status(200).send();
 });
 
 router.get("/:cid", async (req, res) => {
   const { cid } = req.params;
-  const cart = await cartManager.getCartById(cid);
+  const cart = await getCartById(cid);
   res.send({ status: "success", payload: cart });
 });
 
@@ -18,8 +18,8 @@ router.post("/:cid/product/:pid", async (req, res) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body; //TODO: Probar con un formulario?
   try {
-    await cartManager.addProductToCart(cid, pid, quantity);
-    res.send({ status: "success", payload: await cartManager.getCartById(cid) });
+    await addProductToCart(cid, pid, quantity);
+    res.send({ status: "success", payload: await getCartById(cid) });
   } catch (err) {
     res.status(400).send({ status: "error", error: err.message });
   }
@@ -28,7 +28,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
 router.delete("/:cid/product/:pid", async (req, res) => {
   const { cid, pid } = req.params;
   try {
-    await cartManager.deleteProductFromCart(cid, pid);
+    await deleteProductFromCart(cid, pid);
     res.status(200).send();
   } catch (err) {
     res.status(400).send({ status: "error", error: err.message });

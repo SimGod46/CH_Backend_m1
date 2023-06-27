@@ -38,7 +38,10 @@ const initializePassport = () =>{
     })
 
     passport.use("login",new LocalStrategy(
-        {passReqToCallback:true}, async (req,username,password,done)=>{
+        {passReqToCallback:true,
+        usernameField: "nombreUsuario",    // Nombre del campo del formulario para el nombre de usuario
+        passwordField: "contrasenhaUsuario"},
+        async (req,username,password,done)=>{
             try {
                 const usuario = await Usuario.findOne({ email: username})
                 if (!usuario || !isValidPassword(usuario,password)){
