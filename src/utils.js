@@ -18,8 +18,7 @@ function isValidPassword(user,password){
 }
 
 function generateToken(user){
-    const token = jwt.sign({user},PRIVATE_KEY,{expiresIn:"24h"});
-    return token
+    return jwt.sign({user},PRIVATE_KEY,{expiresIn:"24h"});
 }
 
 function authToken(req,res,next){

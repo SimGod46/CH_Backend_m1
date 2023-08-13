@@ -1,20 +1,20 @@
 // Responsabilidad de transformar la información antes de ser enviada a la DB
-import { persistProducts,persistListProducts,persistOneProducts,persistChangeProducts,persistRemoveProducts } from "../persist/products.persist.js"
+//import productsPersist from "../DAO/factory.js";
+import { productsServices } from "../repositories/index.js";
 import {io} from "../index.js"
 
 const addProduct = async (newProductInfo) =>{
     try{
-        newProductInfo.thumbnail = newProductInfo.thumbnails[0];
-        const newProduct = await persistProducts(newProductInfo);
+        const newProduct = await productsServices.persistProducts(newProductInfo);
         return newProduct;
     } catch(error){
         console.log(error);
     }
-    getProducts(10,realtime=true);
+    await getProducts(10,true);
 };
 
 const getProducts = async(limit, realtime=false) => {
-    let listProducts = persistListProducts(limit, realtime);
+    let listProducts = productsServices.persistListProducts(limit, realtime);
     if (limit) {
         listProducts = listProducts.slice(0, limit);
     }
@@ -25,7 +25,7 @@ const getProducts = async(limit, realtime=false) => {
 }
 
 const getProductById = async(id)=>{
-    const product = await persistOneProducts(id);
+    const product = await productsServices.persistOneProducts(id);
     if (product) {
         return product;
     } else {
@@ -34,13 +34,13 @@ const getProductById = async(id)=>{
 }
 
 const updateProduct = async (id,update)=>{
-    await persistChangeProducts(id,update);
-    getProducts(10,realtime=true);
+    await productsServices.persistChangeProducts(id,update);
+    await getProducts(10,true);
 }
 
 const deleteProduct = async (id)=>{
-    await persistRemoveProducts(id);
-    getProducts(10,realtime=true);
+    await productsServices.persistRemoveProducts(id);
+    await getProducts(10,true);
 }
 
 export {addProduct, getProducts, getProductById,updateProduct,deleteProduct};

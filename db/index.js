@@ -20,4 +20,22 @@ const sessionStorage = MongoStore.create({
     ttl:150
 });
 
+/*
+class MongoConnect{
+    static #instance
+    
+    constructor(){
+        mongoose.connect("url")
+    }
+
+    static getInstance(){
+        if(this.#instance){
+            return this.#instance
+        }
+        this.#instance = new Mongo()
+        return this.#instance
+    }
+}
+*/
+
 export {dbConnect,sessionStorage};

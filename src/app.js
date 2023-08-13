@@ -1,4 +1,4 @@
-// Responsabilidad: Configuracion de la aplicación
+// Responsabilidad: Configuración de la aplicación
 import express from 'express'
 import handlebars from "express-handlebars"
 import routes from "./routes/index.js"
@@ -8,12 +8,17 @@ import session from 'express-session';
 import passport from 'passport';
 import initializePassport from "./config/passport.config.js"
 import { dbConnect, sessionStorage } from '../db/index.js';
+//import cors from "cors";
+// app.use(cors()); // se puede conectar desde cualquier otro servidor
+// app.use(cors({"http://localhost:9000"})); // se puede conectar desde cualquier otro servidor
 
 const app = express();
 
 app.engine("handlebars",handlebars.engine());
 app.set("views",__dirname + "/views");
 app.set("view engine","handlebars");
+
+
 
 app.use(express.static(__dirname+"/public"));
 app.use(cookieParser("3n35Kn5%nihA"));

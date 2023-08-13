@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { Usuario } from "../models/users.model.js";
-import { createHash, isValidPassword, generateToken,authToken } from "../utils.js";
+import { Usuario } from "../DAO/mongo/models/users.model.js";
+import { createHash, generateToken } from "../utils.js";
 import passport from "passport";
 
 const router = Router();
 
 function auth(req,res,next){
-    if(req.session?.role=="admin"){
+    if(req.session?.role==="admin"){
         return next()
     }
     return res.status(401).send("Error de autorización")
@@ -53,7 +53,7 @@ router.post("/login",passport.authenticate("login",{failureRedirect:"/api/sessio
         last_name: req.user.last_name,
         age: req.user.age
     } ;
-    if(req.user.email=="adminCoder@coder.com"){
+    if(req.user.email==="adminCoder@coder.com"){
         req.session.role = "admin";
     } else {
         req.session.role = "user";
@@ -64,7 +64,7 @@ router.post("/login",passport.authenticate("login",{failureRedirect:"/api/sessio
 })
 
 router.get("/failureLogin",(req,res)=>{
-    res.send("Error al loguearse");
+    res.send("Error al ingresar");
 })
 
 router.post("/register",passport.authenticate("register",{failureRedirect:"/api/sessions/failureRegister"}), async (req,res)=>{

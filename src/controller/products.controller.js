@@ -4,22 +4,16 @@ import { addProduct,getProducts,getProductById,updateProduct,deleteProduct  } fr
 const router = Router();
 
 function midType(req,res,next){
-    if(req.body.thumbnails == undefined){
-        req.body.thumbnails = ["No Image Available"]
+    if(req.body.title === undefined || req.body.description === undefined || req.body.code === undefined || req.body.price === undefined || req.body.status === undefined || req.body.stock === undefined){
+        res.status(400).send({status:"error",error: "TODOS los campos son obligatorios (excepto thumbnails)"});
     }
-
-    if(req.body.title !== undefined && req.body.description !== undefined && req.body.code !== undefined && req.body.price !== undefined && req.body.status !== undefined && req.body.stock !== undefined){
-        req.body.title = String(req.body.title);
-        req.body.description = String(req.body.description);
-        req.body.code = String(req.body.code);
-        req.body.price = Number(req.body.price);
-        req.body.status = Boolean(req.body.status);
-        req.body.stock = Number(req.body.stock);
-        next()
-    } else {
-        res.status(400).send({status:"error",error: "TODOS los campos son obligarios (excepto thumbnails)"});
-    }
-
+    req.body.title = String(req.body.title);
+    req.body.description = String(req.body.description);
+    req.body.code = String(req.body.code);
+    req.body.price = Number(req.body.price);
+    req.body.status = Boolean(req.body.status);
+    req.body.stock = Number(req.body.stock);
+    next()
 }
 
 router.get("/", async (req,res)=>{
@@ -40,9 +34,8 @@ router.get("/:pid", async (req,res)=>{
 
 router.post("/",midType,async (req,res)=>{
     try{
-        const {title,description,code,price,status,stock,thumbnails} = req.body;
-        const newProductInfo = {title,description,code,price,status,stock,thumbnails}
-        const newProduct = await addProduct(newProductInfo);
+        const product = req.body;
+        const newProduct = await addProduct(product);
         res.json({message:newProduct})
     } catch(error){
 
@@ -51,9 +44,9 @@ router.post("/",midType,async (req,res)=>{
 
 router.put("/:pid",async (req,res)=>{
     let {pid} = req.params;
-    let {title,description,code,price,status,stock,category,thumbnails} = req.body;
+    const product = req.body;
     try {
-        await updateProduct(pid,{title,description,code,price,status,stock,category})
+        await updateProduct(pid,product)
         return res.status(200).send({status:"success"});
     } catch (error) {
         return res.status(400).send({status:"error",error: error.message});

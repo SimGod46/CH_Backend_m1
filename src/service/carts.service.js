@@ -1,12 +1,12 @@
-import {persistOneCarts} from "../persist/carts.persist.js"
+import { cartsPersist } from "../DAO/factory.js";
 import {getProductById} from "./products.service.js"
 
 const createCart = async() => {
-    await persistCart();
+    await cartsPersist.persistCarts();
   }
 
 const getCartById= async(cid)=> {
-    const cart = await persistOneCarts(cid);
+    const cart = await cartsPersist.persistOneCarts(cid);
     if (!cart){
         throw new Error("Cart not found");
     }

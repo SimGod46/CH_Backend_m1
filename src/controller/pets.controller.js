@@ -20,7 +20,7 @@ class routerPet extends CustomRouter{
             const {name, specie} = req.body
             let mascota = {
                 name: name, 
-                specie, specie
+                specie: specie
             }
             pets.push(mascota)
             res.json(pets)
