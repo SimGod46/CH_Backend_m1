@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCart, getCartById, addProductToCart, deleteProductFromCart } from "../service/carts.service.js";
+import { createCart, getCartById, addProductToCart, deleteProductFromCart, purchaseCart } from "../service/carts.service.js";
 
 const router = Router();
 
@@ -34,5 +34,10 @@ router.delete("/:cid/product/:pid", async (req, res) => {
     res.status(400).send({ status: "error", error: err.message });
   }
 });
+
+router.post("/:cid/purchase",async(req,res)=>{
+  const { cid } = req.params;
+  await purchaseCart(cid);
+})
 
 export default router;

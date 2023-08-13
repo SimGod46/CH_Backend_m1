@@ -1,4 +1,5 @@
 import {Cart} from './models/cart.model.js';
+import {Ticket} from "./models/ticket.model.js"
 class CartsMongoDao{
   constructor(){}
 
@@ -9,7 +10,12 @@ class CartsMongoDao{
   
   async persistOneCarts(cid){
     const cart = await Cart.findById(cid);
-    return cart ? cart.products : [];
+    return cart;
+  }
+
+  async createTicket(ticketInfo){
+    const ticket = new Ticket({ticketInfo});
+    await ticket.save();
   }
 }
 

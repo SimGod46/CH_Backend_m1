@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 class CartsFileDao {
   constructor() {
     this.filePath = "./db/cart.localdb.json";
+    this.tickets = []; // Solo para rellenar;
   }
 
   async readFile() {
@@ -34,6 +35,11 @@ class CartsFileDao {
     const cart = carts.find(cart => cart.id === cid);
     return cart ? cart.products : [];
   }
+  async createTicket(ticketInfo){
+    const ticket = { id: this.tickets.length + 1 };
+    this.tickets.push(ticket);
+  }
+
 }
 
 export default CartsFileDao;

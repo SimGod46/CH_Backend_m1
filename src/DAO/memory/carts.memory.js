@@ -1,6 +1,7 @@
 class CartsMemoryDao{
   constructor(){
     this.carts = [];
+    this.tickets =[];
   }
 
   async persistCarts () {
@@ -12,6 +13,11 @@ class CartsMemoryDao{
   async persistOneCarts(cid){
     const cart = this.carts.find(cart => cart.id === cid);
     return cart ? cart.products : [];
+  }
+
+  async createTicket(ticketInfo){
+    const ticket = { id: this.tickets.length + 1 };
+    this.tickets.push(ticket);
   }
 }
 

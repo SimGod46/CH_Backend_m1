@@ -1,5 +1,5 @@
 node_modules
 .env.production
 .env.development
-/src/child1.js
-/src/operacionCompleja.js
+src/child1.js
+src/operacionCompleja.js

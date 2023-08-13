@@ -2,16 +2,19 @@ import nodemailer from "nodemailer" ;
 import {
     serviceMail,
     serviceMailPort,
-    gmailUser,
-    gmailPassword
-} from "./config/gmail.config.js"
+    mailUser,
+    mailPassword
+} from "./config/yahoo.config.js"
 const transport = nodemailer.createTransport({
+    host: 'smtp.mail.yahoo.com',
     service: serviceMail,
     port: serviceMailPort,
     auth:{
-        user: gmailUser,
-        pass: gmailPassword
+        user: mailUser,
+        pass: mailPassword
     }    
 })
+
+export default transport;
 
 
