@@ -2,8 +2,8 @@
 import fs from 'fs/promises';
 
 class ProductsFileDao {
-    constructor(filePath) {
-        this.filePath = filePath;
+    constructor() {
+        this.filePath = "./db/product.localdb.json";
     }
 
     async readFile() {

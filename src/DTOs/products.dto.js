@@ -7,7 +7,7 @@ class ProductDTO{
         this.status = product.status,
         this.stock = product.stock,
         this.thumbnails = product.thumbnails ? product.thumbnails : ["No Image Available"],
-        this.thumbnail = product.thumbnails[0];
+        this.thumbnail = this.thumbnails[0];
     }
 }
 

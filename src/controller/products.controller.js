@@ -45,6 +45,7 @@ router.post("/",midType,async (req,res)=>{
 router.put("/:pid",async (req,res)=>{
     let {pid} = req.params;
     const product = req.body;
+
     try {
         await updateProduct(pid,product)
         return res.status(200).send({status:"success"});

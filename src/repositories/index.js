@@ -1,6 +1,8 @@
 import ProductsRepository from "./products.repository.js"
-import { productsPersist } from "../DAO/factory.js";
+import CartsRepository from "./carts.repository.js";
+import { productsPersist, cartsPersist } from "../DAO/factory.js";
 
-const productsServices = new ProductsRepository(productsPersist);
+const productsServices = new ProductsRepository(new productsPersist.default());
+const cartsServices = new CartsRepository(new cartsPersist.default());
 
-export {productsServices};
+export {productsServices, cartsServices};

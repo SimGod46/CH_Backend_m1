@@ -14,7 +14,7 @@ const addProduct = async (newProductInfo) =>{
 };
 
 const getProducts = async(limit, realtime=false) => {
-    let listProducts = productsServices.persistListProducts(limit, realtime);
+    let listProducts = await productsServices.persistListProducts(limit, realtime);
     if (limit) {
         listProducts = listProducts.slice(0, limit);
     }

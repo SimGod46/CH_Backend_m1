@@ -18,8 +18,6 @@ app.engine("handlebars",handlebars.engine());
 app.set("views",__dirname + "/views");
 app.set("view engine","handlebars");
 
-
-
 app.use(express.static(__dirname+"/public"));
 app.use(cookieParser("3n35Kn5%nihA"));
 
