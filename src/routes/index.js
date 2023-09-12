@@ -5,9 +5,11 @@ import sessions from "../controller/auth.controller.js"
 import carts from "../controller/carts.controller.js"
 import routerPet from "../controller/pets.controller.js"
 import mailControll from "../controller/mail.controller.js"
+import mocks from "../controller/mock.controller.js"
 
 const routes = (app)=>{
     app.use('/realtimeproducts',realtimeproducts)
+    app.use('/mockingproducts',mocks)
     app.use('/api/products',products)
     app.use('/api/sessions',sessions)
     app.use('/api/carts',carts)

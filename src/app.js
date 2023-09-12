@@ -8,6 +8,8 @@ import session from 'express-session';
 import passport from 'passport';
 import initializePassport from "./config/passport.config.js"
 import { dbConnect, sessionStorage } from '../db/index.js';
+import { persistance } from "./config/app.config.js";
+
 //import cors from "cors";
 // app.use(cors()); // se puede conectar desde cualquier otro servidor
 // app.use(cors({"http://localhost:9000"})); // se puede conectar desde cualquier otro servidor
@@ -35,7 +37,7 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-dbConnect();
+if(persistance === "MONGO") dbConnect();
 routes(app);
 
 export { app };
